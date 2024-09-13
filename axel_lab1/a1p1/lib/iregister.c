@@ -11,14 +11,12 @@
 void resetBit(int i, iRegister *r)
 {
 	// pre-condition
-	if(r == NULL)
-	{
+	if(r == NULL){
 		fprintf(stderr, "Error: A NULL pointer was given to resetBit\n");
 		return;
 	}
 	// pre-condition
-	if( i < 0 || i > 31)
-	{
+	if( i < 0 || i > 31){
 		fprintf(stderr,"Error: Invalid bit\n");
 		return;
 	}
@@ -26,8 +24,7 @@ void resetBit(int i, iRegister *r)
   	r->content &= ~(1 << i);
 
 	// post-condition
-	if((r->content & (1<<i)) != 0)
-	{
+	if((r->content & (1<<i)) != 0){
 		fprintf(stderr, "Error: Failed to reset Bit\n");
 		return;	
 	}
@@ -36,8 +33,7 @@ void resetBit(int i, iRegister *r)
 void resetAll(iRegister *r)
 {
 	// pre condition
-	if (r == NULL)
-	{
+	if (r == NULL){
 		fprintf(stderr, " Error: A NULL pointer was given to resetAll\n");
 		return;
 	}
@@ -45,8 +41,7 @@ void resetAll(iRegister *r)
 	r->content = 0;	
 
 	// post-condition
-	if((r->content != 0))
-	{
+	if((r->content != 0)){
 		fprintf(stderr, "Error: Failed to reset all\n");
 		return;	
 	}
@@ -55,8 +50,7 @@ void resetAll(iRegister *r)
 void setAll(iRegister *r)
 {
 	// pre condition
-	if (r == NULL)
-	{
+	if (r == NULL){
 		fprintf(stderr, " Error: A NULL pointer was given to setAll\n");
 		return;
 	}
@@ -64,8 +58,7 @@ void setAll(iRegister *r)
 	r->content = ~0;	
 
 	// post-condition
-	if((r->content != 0))
-	{
+	if((r->content != 0)){
 		fprintf(stderr, "Error: Failed to set all bits to 1\n");
 		return;	
 	}
@@ -74,8 +67,7 @@ void setAll(iRegister *r)
 void assignNibble(int a, int b, iRegister *r){
 
 	// pre-conditions
-	if (r == NULL)
-	{
+	if (r == NULL){
 		fprintf(stderr, "Error: A NULL pointer was given to setAll\n");
 		return;
 	}
@@ -96,12 +88,25 @@ void assignNibble(int a, int b, iRegister *r){
 char *reg2str(iRegister r){
 
 	// pre-condition
-	if (&r == NULL)
-	{
+	if (&r == NULL){
 		fprintf(stderr, "Error: A NULL pointer was given to setAll\n");
 	}
 
-	char bitArray[32] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+	char bitArray[32];
+	int j = 0;
+	for (int i = 1 << 31; i > 0; i /= 2){ // shifting a mask from 1000 0000 0000 0000 0000 0000 0000 0000 -> 0*31 1
+		if (r.content & i){
+			bitArray[j] = '1';
+		}
+		else{
+			bitArray[j] = '0';
+		}
+		j++;
+	}
+	for (int k = 0; k < 32; k++) {
+        printf("%c", bitArray[k]); // what in black magic ? 
+    }
+	// return bitArray; memory stuff I need to read up on
 
 }
 
@@ -109,13 +114,16 @@ int main(){
 	iRegister a; 
 	a.content = 2649;
 
-	int c = 2649 & ~255; 
-	int d = c + 5; 
-	int e = d + (3 << 4);
-	printf("%d\n", e);
-	assignNibble(5, 3, &a);
-	printf("%d\n", a.content);
+	reg2str(a);
+
+
 	return 0;
+	// int c = 2649 & ~255; 
+	// int d = c + 5; 
+	// int e = d + (3 << 4);
+	// printf("%d\n", e);
+	// assignNibble(5, 3, &a);
+	// printf("%d\n", a.content);
 // 	printf("%d\n", a.content);
 // 	setAll(&a);
 // 	printf("%d\n", a.content);
