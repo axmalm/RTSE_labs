@@ -32,3 +32,19 @@ void resetBit(int i, iRegister *r)
 		return;	
 	}
 }
+
+void resetAll(iRegister *r)
+{
+	// pre condition
+	if (r == NULL)
+	{
+		fprintf(stderr, " Error: A NULL pointer was given to resetAll\n");
+	}
+
+	r->content = 0;	
+}
+
+int main(){
+	iRegister a; 
+	a = ;
+}
