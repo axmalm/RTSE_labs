@@ -50,7 +50,7 @@ void resetAll(iRegister *r)
 		return;	
 	}
 }
-
+// new comment
 int main(){
 	iRegister a; 
 	a.content = 130;
