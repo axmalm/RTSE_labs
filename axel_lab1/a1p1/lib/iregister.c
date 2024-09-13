@@ -43,7 +43,12 @@ void resetAll(iRegister *r)
 
 	r->content = 0;	
 
-	return;
+	// post-condition
+	if((r->content != 0))
+	{
+		fprintf(stderr, "Error: Failed to reset Bit\n");
+		return;	
+	}
 }
 
 int main(){
