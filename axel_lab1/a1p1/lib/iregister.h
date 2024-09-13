@@ -91,10 +91,12 @@ int getBit(int, iRegister *);
 
 /** set the first (for pos=1) or the second (for pos=2) four bits of iRegsiter
  * 
- * parameters: the input parameter a should describe the value of the first 4 bits, while input b describes the value of the second four bits
- *             r: a pointer to a memory location of an iRegister instance
+ * parameters: the input parameter a describes the value of the first 4 bits 
+ *             b describes the value of the second four bits
+ *             a pointer to a memory location of an iRegister instance
  * 
- * pre-condition: integer a and b = [0, 15] and iRegister != NULL
+ * pre-condition: integer a and b = [0, 15]
+ *                iRegister != NULL
  * 
  * post-condition: after assignNibble(a, b, R), the bits (0-3) will be assigned as 1s or 0s according to a
  *                 after assignNibble(a, b, R), the bits (4-7) will be assigned as 1s or 0s according to b 
@@ -136,8 +138,8 @@ int getNibble(int, iRegister *);
  * post-condition: the iRegister instance stays unaltered
  *                 a new array of 32 characters is initialized with the same corresponding values as the iRegister instance, but in char
  * 
- * properties: getBit(i,R) returns the same value, for all i, before and after *reg2str is called´
- *             if getBit(x,R) == 0, and c = char *reg2str, then *C[x] = "0"
+ * properties: getBit(i,R) returns the same value, for all i, before and after *reg2str is called
+ *             if getBit(x,R) == 0, and c = char *reg2str, then *c[x] = '0'
  */
 char *reg2str(iRegister);
 

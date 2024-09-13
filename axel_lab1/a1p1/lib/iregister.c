@@ -39,6 +39,7 @@ void resetAll(iRegister *r)
 	if (r == NULL)
 	{
 		fprintf(stderr, " Error: A NULL pointer was given to resetAll\n");
+		return;
 	}
 
 	r->content = 0;	
@@ -46,15 +47,76 @@ void resetAll(iRegister *r)
 	// post-condition
 	if((r->content != 0))
 	{
-		fprintf(stderr, "Error: Failed to reset Bit\n");
+		fprintf(stderr, "Error: Failed to reset all\n");
 		return;	
 	}
 }
-// new comment
+
+void setAll(iRegister *r)
+{
+	// pre condition
+	if (r == NULL)
+	{
+		fprintf(stderr, " Error: A NULL pointer was given to setAll\n");
+		return;
+	}
+
+	r->content = ~0;	
+
+	// post-condition
+	if((r->content != 0))
+	{
+		fprintf(stderr, "Error: Failed to set all bits to 1\n");
+		return;	
+	}
+}
+
+void assignNibble(int a, int b, iRegister *r){
+
+	// pre-conditions
+	if (r == NULL)
+	{
+		fprintf(stderr, "Error: A NULL pointer was given to setAll\n");
+		return;
+	}
+	if (a < 0 || a > 15 || b < 0 || b > 15){
+		fprintf(stderr, "Error: Invalid a or b\n");
+	}
+
+	// clear bits 0-7
+	r->content &= ~255;  // ~255 = 1111 1111 1111 1111 1111 1111 0000 0000
+	// add a
+	r->content += a;
+	// // add b
+	r->content += (b << 4);
+
+	// post-condition how? 
+}
+
+char *reg2str(iRegister r){
+
+	// pre-condition
+	if (&r == NULL)
+	{
+		fprintf(stderr, "Error: A NULL pointer was given to setAll\n");
+	}
+
+	char bitArray[32] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+
+}
+
 int main(){
 	iRegister a; 
-	a.content = 130;
-	printf("%d", a.content);
-	resetAll(&a);
-	printf("%d", a.content);
+	a.content = 2649;
+
+	int c = 2649 & ~255; 
+	int d = c + 5; 
+	int e = d + (3 << 4);
+	printf("%d\n", e);
+	assignNibble(5, 3, &a);
+	printf("%d\n", a.content);
+	return 0;
+// 	printf("%d\n", a.content);
+// 	setAll(&a);
+// 	printf("%d\n", a.content);
 }
