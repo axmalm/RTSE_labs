@@ -42,9 +42,14 @@ void resetAll(iRegister *r)
 	}
 
 	r->content = 0;	
+
+	return;
 }
 
 int main(){
 	iRegister a; 
-	a = ;
+	a.content = 130;
+	printf("%d", a.content);
+	resetAll(&a);
+	printf("%d", a.content);
 }
