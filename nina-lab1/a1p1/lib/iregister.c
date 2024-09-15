@@ -69,20 +69,28 @@ int getBit(int i, iRegister *R)
 		return;
 	}
 
+	//creates an integer to store the value of the content before the function is exectuted.
+	int beg = R->content;
 	//creates the return integer A, assuming it is a one
     int A = 1;
 
+    //creates a copy of the content, so the content itself doesn't get changed
+    int con = R->content;
     // creates a mask with only the i'th value being high - this is bitwise ANDed with the content. if the value is zero, the overall output changes to zero
-	if(R->content &= (1<<i) == 0){
-        int A = 0;
+	if((con &= (1 << i))== 0){
+        A = 0;
     }
-
     //returns the value of the i'th bit
     return A;
 
 
-	// Post-condition
+	// Post-conditions
     if((R->content & (1<<i)) != A)
+	{
+		fprintf(stderr, "Error: Failed to get Bit\n");
+		return;
+	}
+    if(R->content != beg)
 	{
 		fprintf(stderr, "Error: Failed to get Bit\n");
 		return;
@@ -92,8 +100,72 @@ int getBit(int i, iRegister *R)
 
 int getNibble(int i, iRegister *R)
 {
+    // Pre-condition
+	if(R == NULL)
+	{
+		fprintf(stderr, "Error: A NULL pointer was given to getNibble\n");
+		return;
+	}
+    if( i < 1 || i > 8)
+	{
+		fprintf(stderr,"Error: Invalid Nibble selection\n");
+		return;
+	}
+
+	//copies the initial content into an integer to compare it to in the end
+	int beg = R->content;
+
+    //copies the content into an integer value to not change the content intself
+	int con = R->content;
+
+	//creates a mask with 4 ones that are shiftesd as many nibbles up as declared
+	int mask = 00001111 << ((i-1)*4);
+
+	//ANDs that mask with the content, and shifts the nibble to the front of the 32 bits.
+    int nib = (con &= mask) >> ((i-1)*4);
+    return nib;
+
+    // Post-condition
+	if(R->content != beg)
+	{
+		fprintf(stderr, "Error: Failed to get Nibble\n");
+		return;
+	}
+}
+
+
+void shiftRight(int i, iRegister *R)
+{
+    // Pre-condition
+    if(R == NULL)
+	{
+		fprintf(stderr, "Error: A NULL pointer was given to shiftRight\n");
+		return;
+	}
+	if( i < 0 )
+	{
+		fprintf(stderr,"Error: Invalid Shift number\n");
+		return;
+	}
+
+	//shifts the content right by i places
+    R->content = R->content >> i;
+
+	// Post-conditions
+	for(int j = (32-i); j < 32; j++){
+        if(getBit(j,&R) != 0){
+            fprintf(stderr, "Error: Failed to shift right\n");
+            return;
+        }
+	}
+
+	if((R->content << i) != R->content){
+        fprintf(stderr, "Error: Failed to shift right\n");
+        return;
+	}
 
 }
+
 
 
 void resetBit(int i, iRegister *r)
@@ -104,7 +176,7 @@ void resetBit(int i, iRegister *r)
 		fprintf(stderr, "Error: A NULL pointer was given to resetBit\n");
 		return;
 	}
-	// pre-condition
+
 	if( i < 0 || i > 31)
 	{
 		fprintf(stderr,"Error: Invalid bit\n");
