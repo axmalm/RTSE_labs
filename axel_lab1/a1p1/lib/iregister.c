@@ -24,7 +24,7 @@ void resetBit(int i, iRegister *r)
   	r->content &= ~(1 << i);
 
 	// post-condition
-	if((r->content & (1<<i)) != 0){
+	if((r->content & (1 << i)) != 0){
 		fprintf(stderr, "Error: Failed to reset Bit\n");
 		return;	
 	}
@@ -148,15 +148,14 @@ void shiftLeft(int i, iRegister *r){
 		r->content <<= 1;
 	}
 
-	// post-condition
-	// Check i bits to the right are 0's
-	// for (int j = 32 - i; j <= 31; j++){
-	int mask = ;
-	if ((r->content << j) != 0) {
+	// post-conditions
+	// Check that i bits to the right are 0's
+	int mask = (1 << i) - 1;
+	if ((r->content & mask) != 0) {
 		fprintf(stderr, "Error: Bits to the right are not 0\n");
 		return;
 	}
-	
+	// Check that the rest is unaltered
 }
 
 int main(){
