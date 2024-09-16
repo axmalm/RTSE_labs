@@ -55,7 +55,7 @@ void setAll(iRegister *r)
 		return;
 	}
 
-	r->content = ~0;	
+	r->content = ~0; 	
 
 	// post-condition
 	if((r->content != -1)){
@@ -97,7 +97,7 @@ void assignNibble(int a, int b, iRegister *r){
 		return;
 	}
 	// Check bits 8-31
-	if ((r->content & (-1 & ~255)) != (content_before & (-1 & 255))){
+	if ((r->content & ~255) != (content_before & ~255)){
 		fprintf(stderr, "Error: Bits 8-31 has ben altered", b);
 		return;
 	}
@@ -107,7 +107,7 @@ char *reg2str(iRegister r){
 
 	// pre-condition
 
-	char *bitArray = (char *)malloc(33 * sizeof(char)); // debug 33
+	char *bitArray = (char *)malloc(33 * sizeof(char)); 
 	int j = 0;
 
 	for (unsigned int i = 1U << 31; i > 0; i /= 2){ // shifting a mask from 1000 0000 0000 0000 0000 0000 0000 0000 -> 0*31 1
@@ -156,17 +156,22 @@ void shiftLeft(int i, iRegister *r){
 		return;
 	}
 	// Check that the rest is unaltered
+	if ((r->content >> i) != r->content){
+		fprintf(stderr, "Error: Failed to shift bits to the left\n");
+		return;
+	}
 }
 
 int main(){
 	iRegister a; 
-	a.content = 8;
+	a.content = 255;
 
-	// char *bitArray = reg2str(a);
-	// printf("%s\n", bitArray);
+	char *bitArray = reg2str(a);
+	printf("%s\n", bitArray);
 
-	shiftLeft(1, &a);
-	printf("%d\n", a.content);
+
+	// shiftLeft(1, &a);
+	// printf("%d\n", a.content);
 
 
 
