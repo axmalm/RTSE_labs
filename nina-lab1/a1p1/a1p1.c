@@ -13,11 +13,11 @@
 
 void displayMenu() {
 	printf("\n--- Menu ---\n");
-    printf("1. Set All Bits to 1\n");
-    printf("2. Clear All Bits (Set to 0)\n");
-    printf("3. Shift Left\n");
-    printf("4. Shift Right\n");
-    printf("5. Exit\n");
+    printf("1. Reset bits\n");
+    printf("2. Set bit to 1\n");
+    printf("3. Set all bits to 1\n");
+    printf("4. Get bit\n");
+    printf("5. Assign nibble\n");
     printf("Choose an option: ");
 }
 
@@ -33,9 +33,9 @@ int main()
 	uart_init();
 	uart_clear();
 
-	uart_puts("DT8025 - Assignment 1");
+	pfintf("DT8025 - Assignment 1");
 	// Enter name 
-	uart_puts("Enter your name: ");
+	printf("Enter your name: ");
 
 	int i = 0; 
 	// multiple times until receiving a new line.
@@ -43,7 +43,6 @@ int main()
 
 	uarts_puts("Welcome ");
 	uart_puts(str);
-	str[] = 
 	uart_puts("Enter a integer number (32 bit): ");
 	inumber = uart_getc();
 	

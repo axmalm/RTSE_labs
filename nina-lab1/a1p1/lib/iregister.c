@@ -99,7 +99,7 @@ int getBit(int i, iRegister *R)
     }
     //returns the value of the i'th bit
     return A;
-
+ 
 
 	// Post-conditions
     if((R->content & (1<<i)) != A)
