@@ -29,15 +29,22 @@ int main()
 
 	//scanf("%s",str);
 	int i = 0;
-	while(c = uart_getc() != "\n"){
+	c = uart_getc();
+
+	while(c != "\n"){
+        c = uart_getc();
         str[i] = c;
         i++;
 	}
-	uart_puts("\nWelcome %s!", str);
+	uart_puts("\nWelcome");
+	uart_puts(str);
 
 	uart_puts("\nEnter an integer number (32 bit): ");
     int i = 0;
-	while(c = uart_getc() != "\n"){
+    c = uart_getc();
+
+	while(c != "\n"){
+        c = uart_getc();
         str[i] = c;
         i++;
 	}
@@ -48,7 +55,10 @@ int main()
 
 	uart_puts("Enter the bit position (0<=bit<=31): ");
 	int i = 0;
+	c = uart_getc();
+
 	while(c = uart_getc() != "\n"){
+        c = uart_getc();
         str[i] = c;
         i++;
 	}
@@ -57,7 +67,10 @@ int main()
 
 	uart_puts("Enter the nibble position (0<=bit<=7): ");
 	int i = 0;
-    while(c = uart_getc() != "\n"){
+	c = uart_getc();
+
+    while(c != "\n"){
+        c = uart_getc();
         str[i] = c;
         i++;
 	}
@@ -66,51 +79,81 @@ int main()
 
 	uart_puts("Enter the number of bits to shift (1<=bit<=31): ");
 	int i = 0;
+	c = uart_getc();
+
     while(c = uart_getc() != "\n"){
+        c = uart_getc();
         str[i] = c;
         i++;
 	}
 	ishift = atoi(str);
 	//scanf("%d", &ishift);
 
-	uart_puts("You entered number %i", inumber);
+	uart_puts("You entered number ");
+	uart_puts(inumber);
 
 
     setAll(&r);
-    uart_puts("\n\nsetAll(&r) returned %i", r.content);
+    uart_puts("\n\nsetAll(&r) returned ");
+    uart_puts(r.content);
 
     r.content = inumber;
     resetAll(&r);
-    uart_puts("\nresetAll(&r) returned %i", r.content);
-    uart_puts("%c",reg2str(r));
+    uart_puts("\nresetAll(&r) returned ");
+    uart_puts(r.content);
+    uart_puts(reg2str(r));
 
     r.content = inumber;
     setBit(ibit, &r);
-    uart_puts("\nsetBit(%i, &r) returned %i", ibit, r.content);
+    uart_puts("\nsetBit(");
+    uart_puts(ibit);
+    uart_puts(" , &r) returned ");
+    uart_puts(r.content);
+    uart_puts(reg2str(r));
 
     r.content = inumber;
     int A = getBit(ibit, &r);
-    uart_puts("\ngetBit(%i, &r) returned %i", ibit, A);
+    uart_puts("\ngetBit(");
+    uart_puts(ibit);
+    uart_puts(", &r) returned ");
+    uart_puts(A);
+    uart_puts(reg2str(r));
 
     r.content = inumber;
     resetBit(ibit, &r);
-    uart_puts("\nresetBit(%i, &r) returned %i", ibit, r.content);
+    uart_puts("\nresetBit(");
+    uart_puts(ibit);
+    uart_puts(", &r) returned ");
+    uart_puts(r.content);
+    uart_puts(reg2str(r));
 
     r.content = inumber;
     assignNibble(inibble, 1 , &r);
-    uart_puts("\nassignNibble(%i, 1, &r) returned %i", inibble, r.content);
+    uart_puts("\nassignNibble(");
+    uart_puts(inibble);
+    uart_puts(", 1, &r) returned ");
+    uart_puts(r.content);
+    uart_puts(reg2str(r));
 
     r.content = inumber;
     int B = getNibble(inibble, &r);
-    uart_puts("\ngetNibble(%i, &r) returned %i", inibble, B);
+    uart_puts("\ngetNibble(");
+    uart_puts(inibble);
+    uart_puts(", &r) returned ");
+    uart_puts(B);
 
     r.content = inumber;
     shiftRight(ishift, &r);
-    uart_puts("\nshiftRight(%i, &r) returned %i", ishift, r.content);
+    uart_puts("\nshiftRight(");
+    uart_puts(", &r) returned ");
+    uart_puts(r.content);
 
     r.content = inumber;
     shiftLeft(ishift, &r);
-    uart_puts("\nshiftLeft(%i, &r) returned %i", ishift, r.content);
+    uart_puts("\nshiftLeft(");
+    uart_puts(ishift);
+    uart_puts(", &r) returned ");
+    uart_puts(r.content);
 
 	// However, to get a number, you need to call uart_getc
 	// multiple times until receiving a new line.
