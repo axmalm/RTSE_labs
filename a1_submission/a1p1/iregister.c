@@ -62,6 +62,7 @@ void setAll(iRegister *r)
 		return;
 	}
 
+    // sets all values of r->content to 1
 	r->content = ~0;
 
 	// post-condition
@@ -126,12 +127,14 @@ void assignNibble(int a, int b, iRegister *r){
 		return;
 	}
 
+	// creates a copy of the content before, to compare it to later
 	int content_before = r->content;
 
 	//clear out the selected nibble
 	int mask = ~(00001111 << ((a)*4));
 	r->content &= mask;
 
+	//add the binary value of b to the content, with b shifted into the empty nibble
 	r->content += (b << (a*4));
 
 	// post-condition
@@ -159,9 +162,6 @@ int getNibble(int i, iRegister *R)
 	//copies the initial content into an integer to compare it to in the end
 	int beg = R->content;
 
-    //copies the content into an integer value to not change the content intself
-	//int content = R->content;
-
 	//creates a mask with 4 ones that are shifted as many nibbles up as declared
 	int mask = 0x0000000F << (i*4);
 
@@ -179,7 +179,8 @@ int getNibble(int i, iRegister *R)
 
 char *reg2str(iRegister r){
 
-	// pre-condition
+	// no pre-conditions
+
 
 	char *bitArray = (char *)malloc(33 * sizeof(char));
 	int j = 0;
@@ -222,9 +223,11 @@ void shiftRight(int i, iRegister *R)
 		return;
 	}
 
+	// shifts the R->content to the right by i spaces
     R->content = R->content >> i;
 
 	// Post-conditions
+	// check that all bits to the left of the shifted values are zero
 	for(int j = (32-i); j < 32; j++){
         if(getBit(j,&R) != 0){
             fprintf(stderr, "Error: Failed to shift right\n");
@@ -244,6 +247,7 @@ void shiftLeft(int i, iRegister *r){
 		fprintf(stderr, "Error: value of i invalid\n");
 	}
 
+	//shifts r->content to the left by i spaces
 	r->content = r->content << i;
 
 	// post-conditions

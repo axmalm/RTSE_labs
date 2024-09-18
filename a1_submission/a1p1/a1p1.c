@@ -13,9 +13,10 @@
 
 #define LINE 80
 
+// create a function to get typed in characters from the uart
 void inputSerial(char *str){
     char c;
-    int i = 0; 
+    int i = 0;
 	while(i < LINE - 1){
         c = uart_getc();
         if (c == ' ' || c == '\n' || c == '\r'){
@@ -41,8 +42,7 @@ int main()
 	uart_puts("DT8025 - Assignment 1\n");
 	// Enter name
 	uart_puts("Enter your name: ");
-
-
+    // get the name from the user
 	inputSerial(str);
 
 
@@ -51,25 +51,27 @@ int main()
 
 	uart_puts("\nEnter an integer number (32 bit): ");
 	inputSerial(str);
- 
+
+    // saves inumber as a integer while storing the string value in printinumber to be able to print it out
     char printinumber[LINE];
     strcpy(printinumber, str);
-	inumber = atoi(str);    
+	inumber = atoi(str);
 
-
-
+    // repeat the process for ibit (l.55)
 	uart_puts("\nEnter the bit position (0<=bit<=31): ");
     inputSerial(str);
     char printibit[LINE];
     strcpy(printibit, str);
 	ibit = atoi(str);
 
+	// repeat the process for inibble (l.55)
 	uart_puts("\nEnter the nibble position (0<=bit<=7): ");
     inputSerial(str);
     char printinibble[LINE];
     strcpy(printinibble, str);
 	inibble = atoi(str);
 
+	//repeat the process for ishift (l.55)
 	uart_puts("\nEnter the number of bits to shift (1<=bit<=31): ");
     inputSerial(str);
     char printishift[LINE];
@@ -79,7 +81,9 @@ int main()
 	uart_puts("\nYou entered number ");
 	uart_puts(printinumber);
 
-    
+    // use the previously created functions and print solutions to the uart
+    // the print2uart function is used to create a string, which is then printed to the uart using
+    // uart_puts internally
     setAll(&r);
     print2uart("\n\nsetAll(&r) returned %d", r.content);
     uart_puts("   (");
