@@ -46,5 +46,6 @@ void led_blink(){
 		led_on();
 		RPI_WaitMicroSeconds(500000);
 		led_off();
+		RPI_WaitMicroSeconds(500000);
 	}
 }
