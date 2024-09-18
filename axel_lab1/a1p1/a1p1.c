@@ -6,122 +6,115 @@
 */
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-// #include "uart.h"
-#include "lib/iregister.h"
+//#include "uart.h"
+#include "iregister.h"
 
 #define LINE 80
 
-void displayMenu() {
-    printf("\n--- Menu ---\n");
-    printf("1. Set bit to 1\n");
-    printf("2. Set all bits to 1\n");
-    printf("3. Get bit\n");
-    printf("4. Assign nibble\n");
-    printf("5. Get nibble\n");
-    printf("6. reg2str\n");
-    printf("7. Shift right\n");
-    printf("8. Shift left\n");
-    printf("9. Reset bit\n");
-    printf("Choose an option: ");
+int main()
+{
+	iRegister r;
+	char str[LINE];
+	char c;
+	int inumber, inibble, ibit, ishift = 0;
+
+	// Using the uart
+	// First, initialize and clear the channel
+	uart_init();
+	uart_clear();
+
+	uart_puts("DT8025 - Assignment 1\n");
+	// Enter name
+	uart_puts("Enter your name: ");
+
+	//scanf("%s",str);
+	int i = 0;
+	while(c = uart_getc() != "\n"){
+        str[i] = c;
+        i++;
+	}
+	uart_puts("\nWelcome %s!", str);
+
+	uart_puts("\nEnter an integer number (32 bit): ");
+    int i = 0;
+	while(c = uart_getc() != "\n"){
+        str[i] = c;
+        i++;
+	}
+	inumber = atoi(str);
+	//scanf("%d", &inumber);
+
+    r.content = (inumber - '0');
+
+	uart_puts("Enter the bit position (0<=bit<=31): ");
+	int i = 0;
+	while(c = uart_getc() != "\n"){
+        str[i] = c;
+        i++;
+	}
+	ibit = atoi(str);
+	//scanf("%d", &ibit);
+
+	uart_puts("Enter the nibble position (0<=bit<=7): ");
+	int i = 0;
+    while(c = uart_getc() != "\n"){
+        str[i] = c;
+        i++;
+	}
+	inibble = atoi(str);
+	//scanf("%d", &inibble);
+
+	uart_puts("Enter the number of bits to shift (1<=bit<=31): ");
+	int i = 0;
+    while(c = uart_getc() != "\n"){
+        str[i] = c;
+        i++;
+	}
+	ishift = atoi(str);
+	//scanf("%d", &ishift);
+
+	uart_puts("You entered number %i", inumber);
+
+
+    setAll(&r);
+    uart_puts("\n\nsetAll(&r) returned %i", r.content);
+
+    r.content = inumber;
+    resetAll(&r);
+    uart_puts("\nresetAll(&r) returned %i", r.content);
+    uart_puts("%c",reg2str(r));
+
+    r.content = inumber;
+    setBit(ibit, &r);
+    uart_puts("\nsetBit(%i, &r) returned %i", ibit, r.content);
+
+    r.content = inumber;
+    int A = getBit(ibit, &r);
+    uart_puts("\ngetBit(%i, &r) returned %i", ibit, A);
+
+    r.content = inumber;
+    resetBit(ibit, &r);
+    uart_puts("\nresetBit(%i, &r) returned %i", ibit, r.content);
+
+    r.content = inumber;
+    assignNibble(inibble, 1 , &r);
+    uart_puts("\nassignNibble(%i, 1, &r) returned %i", inibble, r.content);
+
+    r.content = inumber;
+    int B = getNibble(inibble, &r);
+    uart_puts("\ngetNibble(%i, &r) returned %i", inibble, B);
+
+    r.content = inumber;
+    shiftRight(ishift, &r);
+    uart_puts("\nshiftRight(%i, &r) returned %i", ishift, r.content);
+
+    r.content = inumber;
+    shiftLeft(ishift, &r);
+    uart_puts("\nshiftLeft(%i, &r) returned %i", ishift, r.content);
+
+	// However, to get a number, you need to call uart_getc
+	// multiple times until receiving a new line.
+	// The results of each call to uart_getc can be stored into str
+	// atoi(str) will result a number.
 }
 
-int main() {
-    iRegister r;  // Initialize the register
-    r.content = 0;  // Set the content to zero
-    char str[LINE];
-    int inumber, inibble, ibit, ishift;
-    int choice;
-    char name[LINE];
-
-    // Initialize and clear the UART channel
-    // uart_init();
-    // uart_clear();
-
-    printf("DT8025 - Assignment 1\n");
-    // Enter name
-    printf("Enter your name: ");
-    scanf("%s", name);
-
-    while (1) {
-        displayMenu();
-        scanf("%d", &choice);
-        switch (choice) {
-            case 1:
-                // Set bit to 1
-                printf("Enter bit number (0-31): ");
-                scanf("%d", &ibit);
-                setBit(ibit, &r);
-                printf("Bit %d set to 1.\n", ibit);
-                break;
-            case 2:
-                // Set all bits to 1
-                setAll(&r);
-                printf("All bits set to 1.\n");
-                break;
-            case 3:
-                // Get bit
-                printf("Enter bit number (0-31): ");
-                scanf("%d", &ibit);
-                inumber = getBit(ibit, &r);
-                printf("Bit %d is %d.\n", ibit, inumber);
-                break;
-            case 4:
-                // Assign nibble
-                printf("Enter value for 'a' (0-15): ");
-                int a;
-                scanf("%d", &a);
-                printf("Enter value for 'b' (0-15): ");
-                int b;
-                scanf("%d", &b);
-                assignNibble(a, b, &r);
-                printf("Assigned nibble with a = %d, b = %d.\n", a, b);
-                break;
-            case 5:
-                // Get nibble
-                printf("Enter nibble index (1-8): ");
-                scanf("%d", &inibble);
-                inumber = getNibble(inibble, &r);
-                printf("Nibble %d is %d.\n", inibble, inumber);
-                break;
-            case 6:
-                // Convert register to string
-                {
-                    char *regStr = reg2str(r);
-                    if (regStr != NULL) {
-                        printf("Register: %s\n", regStr);
-                        free(regStr);  // Free the allocated memory
-                    } else {
-                        printf("Error converting register to string.\n");
-                    }
-                }
-                break;
-            case 7:
-                // Shift right
-                printf("Enter number of positions to shift right: ");
-                scanf("%d", &ishift);
-                shiftRight(ishift, &r);
-                printf("Register shifted right by %d positions.\n", ishift);
-                break;
-            case 8:
-                // Shift left
-                printf("Enter number of positions to shift left: ");
-                scanf("%d", &ishift);
-                shiftLeft(ishift, &r);
-                printf("Register shifted left by %d positions.\n", ishift);
-                break;
-            case 9:
-                // Reset bit
-                printf("Enter bit number (0-31): ");
-                scanf("%d", &ibit);
-                resetBit(ibit, &r);
-                printf("Bit %d reset to 0.\n", ibit);
-                break;
-            default:
-                printf("Invalid choice. Please try again.\n");
-                break;
-        }
-    }
-    return 0;
-}

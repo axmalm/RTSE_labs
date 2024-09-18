@@ -47,7 +47,7 @@ void setBit(int i, iRegister *R)
     R->content |= (1 << i);
 
     // Post-condition
-    if(~(R->content & (1<<i)) != 0)
+    if((R->content & (1 << i)) == 0)
 	{
 		fprintf(stderr, "Error: Failed to set Bit\n");
 		return;
@@ -62,12 +62,12 @@ void setAll(iRegister *r)
 		return;
 	}
 
-	r->content = ~0; 	
+	r->content = ~0;
 
 	// post-condition
 	if((r->content != -1)){
 		fprintf(stderr, "Error: Failed to set all bits to 1\n");
-		return;	
+		return;
 	}
 }
 
@@ -121,34 +121,23 @@ void assignNibble(int a, int b, iRegister *r){
 		fprintf(stderr, "Error: A NULL pointer was given to assignNibble\n");
 		return;
 	}
-	if (a < 0 || a > 15 || b < 0 || b > 15){
+	if (a < 0 || a > 7 || b < 0 || b > 15){
 		fprintf(stderr, "Error: Invalid a or b\n");
 		return;
 	}
 
 	int content_before = r->content;
 
-	// clear bits 0-7
-	r->content &= ~255;  // ~255 = 1111 1111 1111 1111 1111 1111 0000 0000
-	// add a
-	r->content += a;
-	// add b
-	r->content += (b << 4);
+	//clear out the selected nibble
+	int mask = ~(00001111 << ((a)*4));
+	r->content &= mask;
+
+	r->content += (b << (a*4));
 
 	// post-condition
-	// Check bits 0-3
-	if ((r->content & 15) != a) { // bitmask 0000 0000 0000 0000 0000 0000 0000 1111 
-		fprintf(stderr, "Error: Bits 0-3 does not match '%d'\n", a);
-		return;
-	}
-	// Check bits 4-7
-	if (((r->content >> 4) & 15) != b){
-		fprintf(stderr, "Error: Bits 4-7 does not match '%d'\n", b);
-		return;
-	}
-	// Check bits 8-31
-	if ((r->content & ~255) != (content_before & ~255)){
-		fprintf(stderr, "Error: Bits 8-31 has ben altered", b);
+	// Check that the other bits in the content have not been altered
+	if ((content_before & mask) != (r->content & mask)){
+		fprintf(stderr, "Error: Other bits have been altered");
 		return;
 	}
 }
@@ -161,7 +150,7 @@ int getNibble(int i, iRegister *R)
 		fprintf(stderr, "Error: A NULL pointer was given to getNibble\n");
 		return;
 	}
-    if( i < 1 || i > 8)
+    if( i < 0 || i > 7)
 	{
 		fprintf(stderr,"Error: Invalid Nibble selection\n");
 		return;
@@ -171,13 +160,13 @@ int getNibble(int i, iRegister *R)
 	int beg = R->content;
 
     //copies the content into an integer value to not change the content intself
-	int con = R->content;
+	//int content = R->content;
 
-	//creates a mask with 4 ones that are shiftesd as many nibbles up as declared
-	int mask = 00001111 << ((i-1)*4);
+	//creates a mask with 4 ones that are shifted as many nibbles up as declared
+	int mask = 0x0000000F << (i*4);
 
 	//ANDs that mask with the content, and shifts the nibble to the front of the 32 bits.
-    int nib = (con &= mask) >> ((i-1)*4);
+    int nib = (R->content & mask) >> (i*4);
     return nib;
 
     // Post-condition
@@ -192,7 +181,7 @@ char *reg2str(iRegister r){
 
 	// pre-condition
 
-	char *bitArray = (char *)malloc(33 * sizeof(char)); 
+	char *bitArray = (char *)malloc(33 * sizeof(char));
 	int j = 0;
 
 	for (unsigned int i = 1U << 31; i > 0; i /= 2){ // shifting a mask from 1000 0000 0000 0000 0000 0000 0000 0000 -> 0*31 1
@@ -206,7 +195,7 @@ char *reg2str(iRegister r){
 	}
 
 	bitArray[32] = '\0'; // Null-terminate, printf purposes
-	
+
 	// post-conditions
 	// iRegister instance stays unaltered since it's passed by value, not by reference
 	if (j != 32) {
@@ -233,7 +222,6 @@ void shiftRight(int i, iRegister *R)
 		return;
 	}
 
-	//shifts the content right by i places
     R->content = R->content >> i;
 
 	// Post-conditions
@@ -242,11 +230,6 @@ void shiftRight(int i, iRegister *R)
             fprintf(stderr, "Error: Failed to shift right\n");
             return;
         }
-	}
-
-	if((R->content << i) != R->content){
-        fprintf(stderr, "Error: Failed to shift right\n");
-        return;
 	}
 
 }
@@ -261,20 +244,13 @@ void shiftLeft(int i, iRegister *r){
 		fprintf(stderr, "Error: value of i invalid\n");
 	}
 
-	for (int j = 0; j < i; j++){
-		r->content <<= 1;
-	}
+	r->content = r->content << i;
 
 	// post-conditions
 	// Check that i bits to the right are 0's
 	int mask = (1 << i) - 1;
 	if ((r->content & mask) != 0) {
 		fprintf(stderr, "Error: Bits to the right are not 0\n");
-		return;
-	}
-	// Check that the rest is unaltered
-	if ((r->content >> i) != r->content){
-		fprintf(stderr, "Error: Failed to shift bits to the left\n");
 		return;
 	}
 }
