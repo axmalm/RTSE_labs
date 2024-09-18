@@ -42,4 +42,10 @@ void led_off(){
 
 void led_blink(){
 	//to be implemented
+	while (1){
+		led_on();
+		RPI_WaitMicroSeconds(500000);
+		led_off();
+		RPI_WaitMicroSeconds(500000);
+	}
 }
