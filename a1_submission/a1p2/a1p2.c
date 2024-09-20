@@ -8,6 +8,7 @@
 int main()
 {
 	led_init();
+    // repeatedly calls led_blink()
 	while (1) {
         led_blink();
     }
