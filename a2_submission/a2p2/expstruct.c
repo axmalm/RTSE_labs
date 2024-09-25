@@ -12,6 +12,7 @@
 #include <stdlib.h>
 //#include <math.h>
 #include "expstruct.h"
+#include "rpi-systimer.h"
 
 // calculates the facrotial value of i
 double factorial(int i){
@@ -36,10 +37,25 @@ double power(int x, int i){
 
 // taylor series expansion of e^x
 ExpStruct *iexp(int x){
-    int n = 20;
+    int n = 50;
     double res = 1;
-    for (int i = 1; i < n; i++) {
+    double diff = 1;
+    double prev_res = 0;
+    // for (int i = 1; (i < n) || (diff > 0.01); i++) {
+    for (int i = 1; i < n; i++){
+        prev_res = res;
         res += (power(x, i) / factorial(i));
+        if (i==1){
+            diff = res;
+        } else{
+            diff = res - prev_res;
+        }
+        // diff = (i == 1) ? res : res - diff;
+        RPI_WaitMicroSeconds(50000);
+
+        if (diff < 0.01){
+            break;
+        }
     }
 	ExpStruct *e = malloc(sizeof(ExpStruct));
     if (e == NULL) {
