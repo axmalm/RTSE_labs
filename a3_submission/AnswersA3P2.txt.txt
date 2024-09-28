@@ -1,0 +1,26 @@
+Lab 3 part 2:
+Group 8 :)
+
+
+1. spawn function: the spawn function creates a new thread, by assigning it a function that this thread will execute. In the source code provided, the first parameter passed into the computePower function will be a zero. 
+The function works by taking a free thread block from the freeQ. This thread is initialized with its function (computePower) and its first input argument (0). The setjmp function saves the current state of the function into newp->context. If this is equal to 1, the thread was previously used and saved, and is resumed from that point on. If the thread is used for the first time, this if-statement is not true and skipped. Then, the thread context is updated using the SETSTACK function, and the thread is placed into the readyQ, to show that it is ready to be run by the CPU.
+
+2. dispatch function: The dispatch function is used to move the next thread content into the current one.
+It basically moves along the readyQ to the next thread to be executed. It uses the setjmp and longjmp functions to store the context of the current thread (setjmp) and load in the context left off on the next thread (longjmp). 
+
+3. Yield function: This function actually stops the processing of one thread and starts to process another one. (the yield function uses the dispatch as a way of changing the context)
+The function first makes sure, that there is a thread to be executed in the readyQ. It will place the current thread back at the end of the readyQ, and moves the next thread to be processed into the current thread. In the dispatch function, where the context gets changed the actual switching of threads takes place. 
+
+
+4. This line actually executes the function to be implemented. This only happens, if the setjmp returns one. Then, the current argument gets placed into the function. This line is sandwiched in between the ENABLE() and DISABLE() lines, meaning that interrupts can happen during the function execution. 
+
+5. in line 3, the spawn function is being called on. During its execution for the first time, the whole if-statement inside the spawn function is skipped, as there is no previous context to load in. Therefore the readyQ is only edited once, at the end of the spawn function. Here, the newp (which is the thread with the computePower function is added to the end of readyQ. This is only element in the queue. 
+
+6. the freeQ points to a queue of free threads to be used. This queue is only called upon once in the spawn function. There, an empty thread is taken from the head of the queue. That means, the freeQ looks the same after the execution of line 3, with only one thread less. 
+
+7. Even though it seems from the code that the computePower function is being called on first, this is actually not true. The spawn function simply places the computePower thread into the readyQ, meaning it will be executed Next. Line 4 actually calls directly on the computePrimes function, which makes this execute at first. Only after the final execution of the computePrime function is the yield() function called. Here, the CPU will grab the next ready thread from the readyQ (which is the computePower thread) and execute this then.
+
+8. Even though the functions both never return, they both call on the yield() function after they executed their calculations. This yield() function, as described above, changes the thread to the next one in the readyQ and moves the current one to the end of gthe readyQ. Using the yield() function this way, allows to keep switching between one execution of the power function and one execution of the prime function, and so on.
+
+9. To keep track of the threads which terminated, a line to add threads to doneQ would be added into the yield() function. Instead of the line: enqueue(current, &readyQ), where the current thread is put back into the readyQ, this line would be changed to enqueue(current, &doneQ), which terminates the thread, and adds it to the doneQ list. As the thread is then not found in the readyQ list anymore, the CPU would not pick up the thread again.
+
