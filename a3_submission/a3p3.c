@@ -95,9 +95,11 @@ int main() {
 	piface_puts("DT8025 - A3P3");
 	RPI_WaitMicroSeconds(2000000);	
 	piface_clear();
-
 	spawn(computePower, 0);
-	spawn(computePrimes, 1);
-	spawn(computeExponential, 2);
-	computeExponential(3);
+	spawn(computePower, 1);
+	spawn(computePrimes, 2);
+	spawn(computePrimes, 3);
+	spawn(computeExponential, 4);
+	spawn(computeExponential, 5);
+	computeExponential(6);
 }
