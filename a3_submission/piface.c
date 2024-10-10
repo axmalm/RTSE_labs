@@ -256,11 +256,14 @@ void piface_set_cursor(uint8_t col, uint8_t row)
 {
 	//to be implemented
 	uint8_t cmd = 0x00;
+	
+	// if statement to create the exact position of where the cursor should be 
 	if (row == 0) {
         cmd = 0x00 + col; 
     } else if (row == 1) {
         cmd = 0x40 + col;
     }
+	// the command is send to the piface to set the cursor in the selected place
 	lcd_write_cmd(0x80|cmd);
 }
 
@@ -287,6 +290,8 @@ void print_at_seg(int seg, int num) {
 	//to be implemented
 	uint8_t row = 0;
 	uint8_t col = 0;
+
+	// based on the chosen segment, the row and column values are set. The cnt is a global variable that makes sure the lines never overflow (it does this in the piface_putc function)
 	if (seg == 0){
 		row = 0;
 		col = 0;
@@ -304,8 +309,10 @@ void print_at_seg(int seg, int num) {
 		col = 8;
 		cnt = 24;
 	}
-	piface_set_cursor(col, row);
 
+	// the cursor is then set to the selected row and column, and the results are printed to the display
+
+	piface_set_cursor(col, row);
 	PUTTOLDC("T%d: %d\n", seg, num);
 }
 

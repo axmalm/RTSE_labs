@@ -75,6 +75,8 @@ void computeExponential(int seg) {
 			// free(iexp(n++));
 			value = iexp(n++);
 			int sol = 0;
+
+			// if the segment value is even, the integer part of the answer is displayed. If it is odd, the fractional part is displayed instead
 			if (seg % 2 == 0) {
 				sol = value->expInt;
 			} else {
@@ -91,10 +93,12 @@ void computeExponential(int seg) {
 
 
 int main() {
+	// initializes the piface 
 	piface_init();
 	piface_puts("DT8025 - A3P3");
 	RPI_WaitMicroSeconds(2000000);	
 	piface_clear();
+	// creates all the threads to be initialized and placed into the readyQ
 	spawn(computePower, 0);
 	spawn(computePower, 1);
 	spawn(computePrimes, 2);

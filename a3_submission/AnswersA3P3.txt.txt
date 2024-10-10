@@ -1,0 +1,6 @@
+Lab 3 part 3:
+Group 8 :)
+
+When the program is initialized with threads from 0-6, nothing ends up displaying on the piface screen. This is due to two reasons. First, as previously mentioned in AnswersA3P2, the spawn function works by taking a free thread out of the freeQ and using it to store the information for one of the functions to execute. As can be seen in the tinythreads.c file, there are only 6 such threads initialized (from 0 to 5) as the NTHREADS value at the top of the file determines. There are only 6 threads that can be used here, so the dequeue method of getting a free thread from the freeQ will not work as expected and instead enter its else() statement and return NULL. 
+
+The other reason that this specific code will not work here is due to the small screen space on the piface. The value given to the functions did not only determine their thread value, but also in which segment they should display their answers. Any segment higher than the number 3 will not be able to be chosen with the current program. 
