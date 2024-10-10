@@ -24,3 +24,6 @@ The function first makes sure, that there is a thread to be executed in the read
 
 9. To keep track of the threads which terminated, a line to add threads to doneQ would be added into the yield() function. Instead of the line: enqueue(current, &readyQ), where the current thread is put back into the readyQ, this line would be changed to enqueue(current, &doneQ), which terminates the thread, and adds it to the doneQ list. As the thread is then not found in the readyQ list anymore, the CPU would not pick up the thread again.
 
+
+
+
