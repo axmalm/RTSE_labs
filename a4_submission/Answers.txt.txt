@@ -1,0 +1,6 @@
+A4p1:
+Group 8
+
+a) DISABLE() disables all interrupts until the ENABLE() is called on again. This is done during cirical functions, to make sure that they execute correctly, but it also is done to ensure that no global variables are altered while they are being used. For example, in the spawn() and yield() functions, the interrupts are disabled, because the global variables freeQ and readyQ are being used. Just inside the Spawn() function, the interrupts are being enabled again for the execution of one line. This is the line where the function is actually carried out, so the interrupts are enabled to be able to exit the function in case that there is an error. 
+
+b)
