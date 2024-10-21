@@ -305,7 +305,7 @@ void print_at_seg(int seg, int num) {
 		cnt = 24;
 	}
 	piface_set_cursor(col, row);
-
+	
 	PUTTOLDC("T%d: %d\n", seg, num);
 }
 

@@ -57,7 +57,7 @@
 	
 
 #define PUTTOLDC(fmt, args...){ \
-	char s[8]; \
+	char s[9]; \
     sprintf(s, fmt, ##args); \
     piface_puts(s); \
 }

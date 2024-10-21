@@ -189,8 +189,7 @@ void lock(mutex *m) {
 	DISABLE();
 	if (m->locked == 0){
 		m->locked = 1;
-	}
-	if (m->locked == 1){
+	} else {
 		enqueue(current, &m->waitQ);
 		dispatch(dequeue(&readyQ));
 	}
@@ -203,12 +202,14 @@ void lock(mutex *m) {
 void unlock(mutex *m) {
 	// To be implemented in Assignment 4!!!
 	DISABLE();
-	if (m->waitQ != NULL) {
+	if (m->waitQ != 0) {
+		enqueue(current, &readyQ);
 		dispatch(dequeue(&m->waitQ));
 	} else {
 		m->locked = 0;
 	}
 	ENABLE();
+
 }
 
 /** @brief Creates an thread block instance and assign to it an start routine, 
