@@ -1,8 +1,0 @@
-A4p1:
-Group 8
-
-a) DISABLE() disables all interrupts until the ENABLE() is called on again. This is done during cirical functions, to make sure that they execute correctly, but it also is done to ensure that no global variables are altered while they are being used. For example, in the spawn() and yield() functions, the interrupts are disabled, because the global variables freeQ and readyQ are being used. Just inside the Spawn() function, the interrupts are being enabled again for the execution of one line. This is the line where the function is actually carried out, so the interrupts are enabled to be able to exit the function in case that there is an error. 
-
-b) if the yield() function was called inside the dispatch() function, this might happen before the setjump. That could lead to the context being preempted before the context could be saved, resulting in the loss of that information. If yield() is called within enqueue(), the program might not properly enqueue the thread into the queue, which can result in errors later on, when that thread is tried to be accessed. 
-
-if the yield() function was called while another yield() is runnning, this might result in an infinite loop of yielding, because it will recursively call on itself. This might lead to the yeild() function constanlty preempting itslef and not giving way for new functions. It keeps on making progress, deleting that progress and then starting over again. 
