@@ -245,13 +245,13 @@ void spawnWithDeadline(void (* function)(int), int arg, unsigned int deadline, u
  * https://arxiv.org/abs/2110.01111
  */
 static void sortX(thread *queue) {
-	int n; 
-	int idx = 0, highest_prio_idx = 0;
-	thread highest_prio;
+	int n = 0, highest_prio_idx = 0;
 	for (thread t = *queue; t->next != NULL; t = t->next){
 		n++;
 	}
 	while (n != 0){
+		int idx = 0;
+		thread highest_prio = NULL;
 		for (thread tt = *queue; idx != n; tt = tt->next ){
 			if (highest_prio == NULL){
 				highest_prio = tt; 
@@ -262,8 +262,8 @@ static void sortX(thread *queue) {
 				}
 			idx++;
 			}
-		enqueue(dequeueItem(&queue, highest_prio_idx), &readyQ);
 		}
+		enqueue(dequeueItem(&queue, highest_prio_idx), &readyQ);
 		n--;
 	}
 }
@@ -316,8 +316,8 @@ static void scheduler_RR(void){
 /** @brief Schedules periodic tasks using Rate Monotonic (RM) 
  */
 static void scheduler_RM(void){
-	sortX(readyQ);
-
+	sortX(&readyQ);
+	yield();
 }
 
 /** @brief Schedules periodic tasks using Earliest Deadline First  (EDF) 
