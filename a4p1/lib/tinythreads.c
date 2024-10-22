@@ -185,7 +185,6 @@ void yield(void) {
  * mutex and a new thread should be dispatched from the ready queue. 
  */
 void lock(mutex *m) {
-	// To be implemented in Assignment 4!!!
 	DISABLE();
 	if (m->locked == 0){
 		m->locked = 1;
@@ -200,9 +199,8 @@ void lock(mutex *m) {
  * non-empty, otherwise, the locked flag shall be reset.
  */
 void unlock(mutex *m) {
-	// To be implemented in Assignment 4!!!
 	DISABLE();
-	if (m->waitQ != 0) {
+	if (m->waitQ != NULL || m->waitQ != 0) {
 		enqueue(current, &readyQ);
 		dispatch(dequeue(&m->waitQ));
 	} else {
