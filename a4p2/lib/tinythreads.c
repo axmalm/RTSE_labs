@@ -272,7 +272,7 @@ readyQ.next = readyQ.next.next
 /** @brief Removes a specific element from the queue.
  */
 static thread dequeueItem(thread *queue, int idx) {
-	thread p;
+	thread p, temp;
 	int counter = 0;
 	if (*queue) {
 		if (idx == 0){
@@ -281,13 +281,12 @@ static thread dequeueItem(thread *queue, int idx) {
 		} else {
 			for (p = *queue; *p->next!= NULL; p = *p->next){
 				if (counter == idx-1) {
-					thread temp = *p->next;
-					
+					temp = *p->next;
 					*p->next = *p->next->next;
 				}
-				return temp;
 				counter++;
 			}
+			return temp;
 		}
 	} else {
 		// PUTTOLDC("%s", "Empty queue!!!");
