@@ -230,9 +230,9 @@ void spawnWithDeadline(void (* function)(int), int arg, unsigned int deadline, u
 		ENABLE();
 		current->function(current->arg);
 		DISABLE();
-		enqueue(current, &readyQ);
+		// enqueue(current, &readyQ);
 		// current = NULL;
-		dispatch(dequeue(&readyQ));	
+		dispatch(current);	
 	}
 	SETSTACK(&newp->context, &newp->stack);
 	enqueue(newp, &readyQ);
