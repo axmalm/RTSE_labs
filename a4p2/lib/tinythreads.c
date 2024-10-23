@@ -283,7 +283,7 @@ static thread dequeueItem(thread *queue, int idx) {
  * field or attribute.
  * https://arxiv.org/abs/2110.01111
  */
-static void sortX(thread *queue) {
+/*static void sortX(thread *queue) {
 	DISABLE();
 	int n = 0, highest_prio_idx = 0;
 	// first, calculate the amount of threads inside the queue
@@ -317,6 +317,36 @@ static void sortX(thread *queue) {
 		n--;
 	}
 	ENABLE();
+}*/
+static void sortX(thread *queue) {
+    DISABLE();
+    if (*queue == NULL) return;
+
+    thread sorted = NULL; // Initialize an empty sorted queue
+    thread current = *queue;
+
+    // Traverse through the original queue and insert each thread into the sorted queue
+    while (current != NULL) {
+        thread next = current->next; // Save next thread to process
+        if (sorted == NULL || sorted->Period_Deadline > current->Period_Deadline) {
+            // Insert at the beginning if it's the first element or has the highest priority
+            current->next = sorted;
+            sorted = current;
+        } else {
+            // Find the correct position to insert the current thread in the sorted queue
+            thread temp = sorted;
+            while (temp->next != NULL && temp->next->Period_Deadline <= current->Period_Deadline) {
+                temp = temp->next;
+            }
+            current->next = temp->next;
+            temp->next = current;
+        }
+        // Move to the next thread in the original queue
+        current = next;
+    }
+
+    *queue = sorted; // Set the original queue to be the sorted queue
+    ENABLE();
 }
 
 
