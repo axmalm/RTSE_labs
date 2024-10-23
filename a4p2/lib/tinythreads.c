@@ -280,7 +280,7 @@ static void sortX(thread *queue) {
 	while (n != 0){
 		int idx = 0;
 		thread highest_prio = NULL;
-		for (thread tt = *queue; idx != n-1; tt = tt->next ){
+		for (thread tt = *queue; idx < n; tt = tt->next ){
 			if (highest_prio == NULL){
 				highest_prio = tt; 
 				highest_prio_idx = idx;
