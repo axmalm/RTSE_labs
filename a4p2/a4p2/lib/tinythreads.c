@@ -171,9 +171,6 @@ void spawn(void (* function)(int), int arg) {
  * thread gets to run.
  */
 void yield(void) {
-	if (readyQ==NULL){
-		
-	}
 	DISABLE();
 	if (readyQ != NULL){		
 		thread p = dequeue(&readyQ);
@@ -181,7 +178,7 @@ void yield(void) {
 			enqueue(current, &doneQ);
 			dispatch(p);
 		}
-	}
+	}	
 	ENABLE();
 }
 
@@ -235,11 +232,9 @@ void spawnWithDeadline(void (* function)(int), int arg, unsigned int deadline, u
 		ENABLE();
 		current->function(current->arg);
 		DISABLE();
-		enqueue(current, &doneQ);
+		// enqueue(current, &readyQ);
 		// current = NULL;
-		// dispatch(current);
-		dispatch(dequeue(&readyQ));
-			
+		dispatch(current);	
 	}
 	SETSTACK(&newp->context, &newp->stack);
 	enqueue(newp, &readyQ);
