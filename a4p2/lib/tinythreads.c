@@ -325,13 +325,19 @@ static void sortX(thread *queue) {
 void respawn_periodic_tasks(void) {
 	DISABLE();
 	thread curr = doneQ;
-	idx = 0;
+	int idx = 0;
+	// if there are elements in the doneQ
 	while (curr != NULL){
+		// check if its time to respawn any of the threads
 		if (ticks % curr->Period_Deadline == 0){
+			// if yes, the thread gets respawned (placed into the readyQ)
 			spawnWithDeadline(curr->function, curr->arg, curr->Period_Deadline, curr->Period_Deadline);
+			// and it gets deleted from the doneQ
 			thread del = dequeueItem(&doneQ, idx);
 		} 
+		// then, the next thread inside the doneQ is checked
 		curr = curr->next;
+		// and the index is increased
 		idx++;
 	}
 	ENABLE();
