@@ -169,6 +169,7 @@ void spawn(void (* function)(int), int arg) {
 
 /** @brief Preempts the execution of the current thread and a new 
  * thread gets to run.
+ * Also, the current thread is now placed into the doneQ, instead of back into the readyQ
  */
 void yield(void) {
 	DISABLE();
@@ -224,6 +225,7 @@ void spawnWithDeadline(void (* function)(int), int arg, unsigned int deadline, u
 	newp->function = function;
 	newp->arg = arg;
 	newp->next = NULL;
+	// sets deadlines as well
 	newp->Period_Deadline = deadline;
 	newp->Rel_Period_Deadline = rel_deadline;
 	if (setjmp(newp->context) == 1) {
@@ -244,17 +246,22 @@ void spawnWithDeadline(void (* function)(int), int arg, unsigned int deadline, u
 static thread dequeueItem(thread *queue, int idx) {
 	thread p, temp;
 	int counter = 0;
+	// first, check if the queue is not empty
 	if (*queue) {
+		// then check if the chosen index is 0
 		if (idx == 0){
+			// then, the normal dequeue code is run:
 			p = *queue;
 			*queue = (*queue)->next;
 			return p;
+		// if another index was chosen, a while loop will check through all elements of the queue until the counter = the index
 		} else {
 			p = *queue;
 			while(p->next != NULL && counter < idx-1){
 				p = p->next;
 				counter++;
 			}
+			// if the right index was found, the temp thread stores the chosen thread, temp is returned and skipped int the queue
 			if (p->next != NULL && counter == idx -1){
 				temp = p->next;
 				p->next = p->next->next;
@@ -262,6 +269,7 @@ static thread dequeueItem(thread *queue, int idx) {
 			}
 		}
 	}
+	//if the queue is empty, null is returned
 	return NULL;
 }
 
@@ -272,17 +280,21 @@ static thread dequeueItem(thread *queue, int idx) {
 static void sortX(thread *queue) {
 	DISABLE();
 	int n = 0, highest_prio_idx = 0;
-	for (thread t = *queue; t->next != NULL; t = t->next){
+	// this for loop counts the threads inside the queue
+	for (thread t = *queue; t == NULL; t = t->next){
 		t->Rel_Period_Deadline--;
 		n++;
 	}
 	while (n != 0){
 		int idx = 0;
 		thread highest_prio = NULL;
-		for (thread tt = *queue; idx != n; tt = tt->next ){
+		// this for loop traverses through every thread in the queue
+		for (thread tt = *queue; idx != n-1; tt = tt->next ){
+			// if the highest priority has not been set, set it to the current thread
 			if (highest_prio == NULL){
 				highest_prio = tt; 
 			} else {
+				// if there we are looking at a higher priority task, change the highest prio
 				if (highest_prio->Rel_Period_Deadline > tt->Rel_Period_Deadline) {
 					highest_prio = tt;
 					highest_prio_idx = idx;
