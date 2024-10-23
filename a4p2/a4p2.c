@@ -106,7 +106,7 @@ void computeSomethingForever(int seg) {
 void computeSomething(int seg) {
 	volatile int t = ticks;
 	ExpStruct* value = iexp(10);
-	printf_at_seg(seg % 4, "S%d: %d", seg, t);
+	print_at_seg(seg % 4, t);
 	while(t==ticks);
 } 
 

@@ -316,6 +316,6 @@ void print_at_seg(int seg, int num) {
  *  You can redeclare printAtSeg as:
  *     void printAtSeg(int seg, const char* fmt, ...);
  */
-// void printf_at_seg(int seg, const char* fmt, ...) {
-//     // The implementation is optional.	
-// }
+void printf_at_seg(int seg, const char* fmt, ...) {
+    // The implementation is optional.	
+}
