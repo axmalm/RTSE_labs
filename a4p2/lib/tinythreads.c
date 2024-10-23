@@ -235,6 +235,7 @@ void spawnWithDeadline(void (* function)(int), int arg, unsigned int deadline, u
 		ENABLE();
 		current->function(current->arg);
 		DISABLE();
+		// enqueue the current, done thread into the doneQ
 		enqueue(current, &doneQ);
 		// current = NULL;
 		// dispatch(current);
@@ -251,17 +252,22 @@ void spawnWithDeadline(void (* function)(int), int arg, unsigned int deadline, u
 static thread dequeueItem(thread *queue, int idx) {
 	thread p, temp;
 	int counter = 0;
+	// if statement to check if there is something in the queue
 	if (*queue) {
+		// if the chosen index was zero, the same procedure as in dequeue() is done
 		if (idx == 0){
 			p = *queue;
 			*queue = (*queue)->next;
 			return p;
+		// if the chosen index was not zero
 		} else {
 			p = *queue;
+			// traverse through all threads in the queue, until reaching the one chosen through the index
 			while(p->next != NULL && counter < idx-1){
 				p = p->next;
 				counter++;
 			}
+			// if the chosen thread was found, store it in temp & return that, also skip it in the queue
 			if (p->next != NULL && counter == idx -1){
 				temp = p->next;
 				p->next = p->next->next;
