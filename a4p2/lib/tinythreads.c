@@ -250,27 +250,28 @@ void spawnWithDeadline(void (* function)(int), int arg, unsigned int deadline, u
 /** @brief Removes a specific element from the queue.
  */
 static thread dequeueItem(thread *queue, int idx) {
-	thread p, temp;
+	thread *p;
+	thread temp;
 	int counter = 0;
 	// if statement to check if there is something in the queue
 	if (*queue) {
 		// if the chosen index was zero, the same procedure as in dequeue() is done
 		if (idx == 0){
-			p = *queue;
+			temp = *queue;
 			*queue = (*queue)->next;
-			return p;
+			return temp;
 		// if the chosen index was not zero
 		} else {
-			p = *queue;
+			p = queue;
 			// traverse through all threads in the queue, until reaching the one chosen through the index
-			while(p->next != NULL && counter < idx-1){
-				p = p->next;
+			while((*p)->next != NULL && counter < idx-1){
+				(*p) = (*p)->next;
 				counter++;
 			}
 			// if the chosen thread was found, store it in temp & return that, also skip it in the queue
-			if (p->next != NULL && counter == idx -1){
-				temp = p->next;
-				p->next = p->next->next;
+			if ((*p)->next != NULL && counter == idx -1){
+				temp = (*p)->next;
+				(*p)->next = (*p)->next->next;
 				return temp;
 			}
 		}
