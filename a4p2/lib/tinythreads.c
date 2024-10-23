@@ -273,7 +273,6 @@ static void sortX(thread *queue) {
 	DISABLE();
 	int n = 0, highest_prio_idx = 0;
 	for (thread t = *queue; t->next != NULL; t = t->next){
-		t->Rel_Period_Deadline--;
 		n++;
 	}
 	while (n != 0){
@@ -283,7 +282,7 @@ static void sortX(thread *queue) {
 			if (highest_prio == NULL){
 				highest_prio = tt; 
 			} else {
-				if (highest_prio->Rel_Period_Deadline > tt->Rel_Period_Deadline) {
+				if (highest_prio->Period_Deadline > tt->Period_Deadline) {
 					highest_prio = tt;
 					highest_prio_idx = idx;
 				}
