@@ -250,7 +250,7 @@ void spawnWithDeadline(void (* function)(int), int arg, unsigned int deadline, u
 /** @brief Removes a specific element from the queue.
  */
 static thread dequeueItem(thread *queue, int idx) {
-	thread *p;
+	thread p;
 	thread temp;
 	int counter = 0;
 	// if statement to check if there is something in the queue
@@ -262,16 +262,16 @@ static thread dequeueItem(thread *queue, int idx) {
 			return temp;
 		// if the chosen index was not zero
 		} else {
-			p = queue;
+			p = *queue;
 			// traverse through all threads in the queue, until reaching the one chosen through the index
-			while((*p)->next != NULL && counter < idx-1){
-				(*p) = (*p)->next;
+			while(p->next != NULL && counter < idx-1){
+				p = p->next;
 				counter++;
 			}
 			// if the chosen thread was found, store it in temp & return that, also skip it in the queue
-			if ((*p)->next != NULL && counter == idx -1){
-				temp = (*p)->next;
-				(*p)->next = (*p)->next->next;
+			if (p->next != NULL && counter == idx -1){
+				temp = p->next;
+				p->next = p->next->next;
 				return temp;
 			}
 		}
@@ -286,25 +286,34 @@ static thread dequeueItem(thread *queue, int idx) {
 static void sortX(thread *queue) {
 	DISABLE();
 	int n = 0, highest_prio_idx = 0;
+	// first, calculate the amount of threads inside the queue
 	for (thread t = *queue; t != NULL; t = t->next){
 		n++;
 	}
+	// if there are threads in the queue, enter this loop
 	while (n != 0){
 		int idx = 0;
 		thread highest_prio = NULL;
+		// go through all the threads in the queue
 		for (thread tt = *queue; idx < n; tt = tt->next ){
+			// if the highest priority thread hasnt been set yet, set it now
 			if (highest_prio == NULL){
+				// set the thread, and its index
 				highest_prio = tt; 
 				highest_prio_idx = idx;
 			} else {
+				//otherwise, compare the priorities of the saved thread with the current one. The higher priority one gets saved
 				if (highest_prio->Period_Deadline > tt->Period_Deadline) {
 					highest_prio = tt;
 					highest_prio_idx = idx;
 				}
 			}
+			// increase the index to check each thread
 			idx++;
 		}
+		// if the thread with the highest priority was found, take it out of the readyQ, and place it back into its end.
 		enqueue(dequeueItem(queue, highest_prio_idx), &readyQ);
+		// decrease the n value and go around the loop again
 		n--;
 	}
 	ENABLE();
@@ -316,11 +325,14 @@ static void sortX(thread *queue) {
 void respawn_periodic_tasks(void) {
 	DISABLE();
 	thread curr = doneQ;
+	idx = 0;
 	while (curr != NULL){
 		if (ticks % curr->Period_Deadline == 0){
 			spawnWithDeadline(curr->function, curr->arg, curr->Period_Deadline, curr->Period_Deadline);
+			thread del = dequeueItem(&doneQ, idx);
 		} 
 		curr = curr->next;
+		idx++;
 	}
 	ENABLE();
 }
