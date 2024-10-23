@@ -174,8 +174,10 @@ void yield(void) {
 	DISABLE();
 	if (readyQ != NULL){		
 		thread p = dequeue(&readyQ);
-		enqueue(current, &doneQ);
-		dispatch(p);
+		if(p != NULL){
+			enqueue(current, &doneQ);
+			dispatch(p);
+		}
 	}	
 	ENABLE();
 }
@@ -272,7 +274,7 @@ static thread dequeueItem(thread *queue, int idx) {
 static void sortX(thread *queue) {
 	DISABLE();
 	int n = 0, highest_prio_idx = 0;
-	for (thread t = *queue; t = NULL; t = t->next){
+	for (thread t = *queue; t != NULL; t = t->next){
 		n++;
 	}
 	while (n != 0){
@@ -281,6 +283,7 @@ static void sortX(thread *queue) {
 		for (thread tt = *queue; idx != n-1; tt = tt->next ){
 			if (highest_prio == NULL){
 				highest_prio = tt; 
+				highest_prio_idx = idx;
 			} else {
 				if (highest_prio->Period_Deadline > tt->Period_Deadline) {
 					highest_prio = tt;
