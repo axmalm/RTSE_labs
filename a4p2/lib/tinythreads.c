@@ -248,7 +248,6 @@ void spawnWithDeadline(void (* function)(int), int arg, unsigned int deadline, u
  */
 static thread dequeueItem(thread *queue, int idx) {
 	thread p, temp;
-	int counter = 0;
 	if (*queue) {
 		if (idx == 0){
 			p = *queue;
@@ -256,11 +255,10 @@ static thread dequeueItem(thread *queue, int idx) {
 			return p;
 		} else {
 			p = *queue;
-			while(p->next != NULL && counter < idx-1){
+			while(p->next != NULL && p->idx < idx-1){
 				p = p->next;
-				counter++;
 			}
-			if (p->next != NULL && counter == idx -1){
+			if (p->next != NULL && p->idx == idx -1){
 				temp = p->next;
 				p->next = p->next->next;
 				return temp;
