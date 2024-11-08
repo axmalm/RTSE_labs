@@ -271,27 +271,28 @@ static thread dequeueItem(thread *queue, int idx) {
  * field or attribute.
  * https://arxiv.org/abs/2110.01111
  */
-static void sortX(thread *queue) {
+
+static void sortX(thread *queue){
 	DISABLE();
 	int n = 0;
+	thread curr, highest_prio;
 	for (thread t = *queue; t->next != NULL; t = t->next){
 		n++;
 	}
-	while (n != 0){
-		int idx = 0;
-		thread highest_prio = NULL;
-		for (thread tt = *queue; idx != n; tt = tt->next ){
+	int count = n;
+	for (int i = 0; i <= n; i++){
+		curr = *queue;
+		highest_prio = NULL;
+		for (int j = 0; j <= count; j ++){
 			if (highest_prio == NULL){
-				highest_prio = tt; 
-			} else {
-				if (highest_prio->Period_Deadline > tt->Period_Deadline) {
-					highest_prio = tt;
-				}
+				highest_prio = curr;
+			} else if (curr->Period_Deadline < highest_prio->Period_Deadline){
+				highest_prio = curr;
 			}
-			idx++;
+			curr = curr->next;
 		}
 		enqueue(dequeueItem(queue, highest_prio->idx), &readyQ);
-		n--;
+		count--;
 	}
 	ENABLE();
 }
