@@ -276,9 +276,11 @@ static void sortX(thread *queue){
 	DISABLE();
 	int n = 0;
 	thread curr, highest_prio;
-	for (thread t = *queue; t->next != NULL; t = t->next){
+	for (thread t = *queue; t != NULL; t = t->next){
 		n++;
+		t->Rel_Period_Deadline--;
 	}
+	n -= 1;
 	int count = n;
 	for (int i = 0; i <= n; i++){
 		curr = *queue;
@@ -286,7 +288,7 @@ static void sortX(thread *queue){
 		for (int j = 0; j <= count; j ++){
 			if (highest_prio == NULL){
 				highest_prio = curr;
-			} else if (curr->Period_Deadline < highest_prio->Period_Deadline){
+			} else if (curr->Rel_Period_Deadline < highest_prio->Rel_Period_Deadline){
 				highest_prio = curr;
 			}
 			curr = curr->next;
@@ -306,6 +308,7 @@ void respawn_periodic_tasks(void) {
 	while (curr != NULL){
 		if (ticks % curr->Period_Deadline == 0){
 			curr = dequeueItem(&doneQ, curr->idx);
+			curr->Rel_Period_Deadline = curr->Period_Deadline;
 			if (setjmp(curr->context) == 1) {
 				ENABLE();
 				current->function(current->arg);
@@ -341,7 +344,10 @@ static void scheduler_RM(void){
 /** @brief Schedules periodic tasks using Earliest Deadline First  (EDF) 
  */
 static void scheduler_EDF(void){
-	// To be implemented in Assignment 4!!!
+	sortX(&readyQ);
+	if (current->Rel_Period_Deadline > readyQ->Rel_Period_Deadline){
+		yield();
+	}
 }
 
 /** @brief Calls the actual scheduling mechanisms, i.e., Round Robin,
@@ -352,7 +358,7 @@ static void scheduler_EDF(void){
 void scheduler(void){
 	// To be implemented in Assignment 4!!!
 	respawn_periodic_tasks();
-	scheduler_RM();
+	scheduler_EDF();
 }
 
 /** @brief Prints via UART the content of the main variables in TinyThreads
