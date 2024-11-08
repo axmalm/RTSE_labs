@@ -250,14 +250,17 @@ static thread dequeueItem(thread *queue, int idx) {
 	thread cur = *queue;
 	thread prev = NULL;
 	if (*queue) {
+		//if the current index is the chosen one, dequeue that one
 		if (cur->idx == idx){
 			*queue = cur->next;
 			return cur;
 		} else {
+			//otherwise, traverse through the queue until the indexes match up
 			while(cur->idx != idx){
 				prev = cur;
 				cur = cur->next;
 			}
+			//if the thread is identified, skip it in the queue and return that thread
 			if(cur){
 				prev->next = cur->next;
 				return cur;
@@ -276,21 +279,27 @@ static void sortX(thread *queue){
 	DISABLE();
 	int n = 0;
 	thread curr, highest_prio;
+	//this loop counts the amount of threads in the queue initially
 	for (thread t = *queue; t->next != NULL; t = t->next){
 		n++;
 	}
 	int count = n;
+	//loop around until each thread has been sorted
 	for (int i = 0; i <= n; i++){
 		curr = *queue;
 		highest_prio = NULL;
+		//loop around to find the highest priority thread
 		for (int j = 0; j <= count; j ++){
 			if (highest_prio == NULL){
 				highest_prio = curr;
+			//edit the highest priority thread when the priority of the current thread is higher
 			} else if (curr->Period_Deadline < highest_prio->Period_Deadline){
 				highest_prio = curr;
 			}
+			//traverse through all threads in the queue
 			curr = curr->next;
 		}
+		//remove the thread from its original location, and place it back at the end of the queue
 		enqueue(dequeueItem(queue, highest_prio->idx), &readyQ);
 		count--;
 	}
@@ -304,6 +313,7 @@ void respawn_periodic_tasks(void) {
 	DISABLE();
 	thread curr = doneQ;
 	while (curr != NULL){
+		//only respawn a task, when the thread has reached its period
 		if (ticks % curr->Period_Deadline == 0){
 			curr = dequeueItem(&doneQ, curr->idx);
 			if (setjmp(curr->context) == 1) {
