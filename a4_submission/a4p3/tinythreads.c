@@ -235,6 +235,7 @@ void spawnWithDeadline(void (* function)(int), int arg, unsigned int deadline, u
 		ENABLE();
 		current->function(current->arg);
 		DISABLE();
+		//send the finished, current thread back into the doneQ
 		enqueue(current, &doneQ);
 		current = NULL;
 		dispatch(dequeue(&readyQ));	
@@ -249,15 +250,19 @@ void spawnWithDeadline(void (* function)(int), int arg, unsigned int deadline, u
 static thread dequeueItem(thread *queue, int idx) {
 	thread cur = *queue;
 	thread prev = NULL;
+	//if there are threads in the queue, enter this loop
 	if (*queue) {
+		//if the index of the current(first) thread is the chosen one, dequeue that thread
 		if (cur->idx == idx){
 			*queue = cur->next;
 			return cur;
 		} else {
+			//otherwise loop around the threads in the queue until the indexes match up
 			while(cur->idx != idx){
 				prev = cur;
 				cur = cur->next;
 			}
+			//if a current thread has been selected, skip that thread in the queue, and return it
 			if(cur){
 				prev->next = cur->next;
 				return cur;
@@ -278,6 +283,7 @@ static void sortX(thread *queue){
 	thread curr, highest_prio;
 	for (thread t = *queue; t != NULL; t = t->next){
 		n++;
+		//everytime, this sortX function is called, all relative period deadlines get decremented by one
 		t->Rel_Period_Deadline--;
 	}
 	n -= 1;
@@ -286,13 +292,17 @@ static void sortX(thread *queue){
 		curr = *queue;
 		highest_prio = NULL;
 		for (int j = 0; j <= count; j ++){
+			//if the highest priority thread has not been set, set the current one
 			if (highest_prio == NULL){
 				highest_prio = curr;
+			//otherwise, check if the relative period deadline of the current thread is closer than the one of the highest priority thread
 			} else if (curr->Rel_Period_Deadline < highest_prio->Rel_Period_Deadline){
 				highest_prio = curr;
 			}
+			//traverse through all the threads in the queue
 			curr = curr->next;
 		}
+		//if the thread with the lowest deadline is identified, it gets dequeued from its original position and placed back into the end of the queue
 		enqueue(dequeueItem(queue, highest_prio->idx), &readyQ);
 		count--;
 	}
@@ -308,6 +318,7 @@ void respawn_periodic_tasks(void) {
 	while (curr != NULL){
 		if (ticks % curr->Period_Deadline == 0){
 			curr = dequeueItem(&doneQ, curr->idx);
+			//whenever a task is respawned, the relative period deadline gets reset to the period deadline
 			curr->Rel_Period_Deadline = curr->Period_Deadline;
 			if (setjmp(curr->context) == 1) {
 				ENABLE();
