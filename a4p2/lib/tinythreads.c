@@ -163,7 +163,7 @@ void spawn(void (* function)(int), int arg) {
 		ENABLE();
 		current->function(current->arg);
 		DISABLE();
-		enqueue(current, &doneQ);
+		enqueue(current, &freeQ);
 		current = NULL;
 		dispatch(dequeue(&readyQ));	
 	}
@@ -179,7 +179,7 @@ void yield(void) {
 	DISABLE();
 	if (readyQ != NULL){		
 		thread p = dequeue(&readyQ);
-		enqueue(current, &doneQ);
+		enqueue(current, &readyQ);
 		dispatch(p);
 	}	
 	ENABLE();
@@ -247,21 +247,20 @@ void spawnWithDeadline(void (* function)(int), int arg, unsigned int deadline, u
 /** @brief Removes a specific element from the queue.
  */
 static thread dequeueItem(thread *queue, int idx) {
-	thread p, temp;
+	thread cur = *queue;
+	thread prev = NULL;
 	if (*queue) {
-		if (idx == 0){
-			p = *queue;
-			*queue = (*queue)->next;
-			return p;
+		if (cur->idx == idx){
+			*queue = cur->next;
+			return cur;
 		} else {
-			p = *queue;
-			while(p->next != NULL && p->idx < idx-1){
-				p = p->next;
+			while(cur->idx != idx){
+				prev = cur;
+				cur = cur->next;
 			}
-			if (p->next != NULL && p->idx == idx -1){
-				temp = p->next;
-				p->next = p->next->next;
-				return temp;
+			if(cur){
+				prev->next = cur->next;
+				return cur;
 			}
 		}
 	}
@@ -333,7 +332,9 @@ static void scheduler_RR(void){
  */
 static void scheduler_RM(void){
 	sortX(&readyQ);
-	yield();
+	if (current->Period_Deadline > readyQ->Period_Deadline){
+		yield();
+	}
 }
 
 /** @brief Schedules periodic tasks using Earliest Deadline First  (EDF) 
