@@ -1,3 +1,5 @@
 A4P2
 Group 8 :)
 
+The line of code: while(t==ticks) makes sure, that the program stays at the end of this computeSomthing function, as long as the ticks do not get incremented. The volatile integer t stores the value of ticks at the beginning of the computeSomething function. When an interrupt is called, the ticks variable gets edited, while the t variable stays the same. Then, the while statement is not true anymore, and the program will move out of the computeSomething function. 
+When this line of code is removed, the piface display prints the ticks at the exact time that the threads are released. so the thread with period 3 will be printed at ticks (0,3,6,9,12,15,...), the thread with period 5 at ticks (0,5,10,15,20,...) and the one with period 7 at ticks (0,7,14,21,...). Before, when two threads were released at the same time, they excuted in the order of smallest deadline first. Now, when a computesomething function returns, the next thread is dispatched immediately, whithin the same tick, making it look like all threads released at the same time also execute at the exact same time. 
