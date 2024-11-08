@@ -107,7 +107,7 @@ void computeSomething(int seg) {
 	volatile int t = ticks;
 	ExpStruct* value = iexp(10);
 	print_at_seg(seg % 4, t);
-	while(t==ticks);
+	// while(t==ticks);
 } 
 
 int main() {
